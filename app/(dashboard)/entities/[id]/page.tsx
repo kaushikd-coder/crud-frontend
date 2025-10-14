@@ -1,6 +1,6 @@
 'use client'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store/hooks'
 import { fetchTaskById, deleteTask, clearCurrent } from '@/store/slices/taskSlice'
 import { useParams, useRouter } from 'next/navigation'
@@ -38,7 +38,7 @@ export default function TaskDetailPage() {
     const loadState = useAppSelector((s: any) => s.tasks.currentStatus)
     const loadError = useAppSelector((s: any) => s.tasks.currentError)
 
-    React.useEffect(() => {
+    useEffect(() => {
         if (id) {
             dispatch(fetchTaskById({ id: String(id), token }))
         }
@@ -82,7 +82,7 @@ export default function TaskDetailPage() {
                     <ChevronLeft className="h-4 w-4" /> Back to Entities
                 </button>
 
-                
+
             </div>
 
             {/* Card */}

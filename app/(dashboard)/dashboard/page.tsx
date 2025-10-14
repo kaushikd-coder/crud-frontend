@@ -1,5 +1,5 @@
 'use client';
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Clock3, CalendarDays, Plus, ChevronRight } from "lucide-react";
@@ -13,8 +13,9 @@ import DashboardSummary from "./_components/DashboardSummary";
 
 export default function DashboardPage() {
     const dispatch = useDispatch();
-    const items = useAppSelector((s:any) => s.tasks.items);
-    const token = useAppSelector((s:any) => s.auth.token);
+    const items = useAppSelector((s: any) => s.tasks.items);
+    const [token, setToken] = useState<any>();
+    const localToken = useAppSelector((s: any) => s.auth.token);
 
     const [filters, setFilters] = React.useState<any>({
         status: "",
@@ -57,7 +58,28 @@ export default function DashboardPage() {
         }
     }, [dispatch, page, pageSize, query, filters, token]);
 
-    useEffect(() => { load(); }, [load]);
+    useEffect(() => {
+
+        if (localToken) {
+            setToken(localToken);
+            load()
+            return;
+        }
+
+        const storedUser = localStorage.getItem("user");
+        const storedToken = localStorage.getItem("token");
+
+        if (storedUser && storedToken) {
+            try {
+                setToken(storedToken);
+                load()
+            } catch (err) {
+                console.error("Failed to parse stored user:", err);
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+            }
+        }
+    }, [localToken, load])
 
     return (
         <section className="relative mx-auto h-full max-w-6xl space-y-8 p-4">

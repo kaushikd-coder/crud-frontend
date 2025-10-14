@@ -55,30 +55,35 @@ export default function EntitiesPage() {
     const [confirm, setConfirm] = React.useState<{ open: boolean; id?: string }>({ open: false });
 
     const load = React.useCallback(async () => {
-        try {
-            await dispatch(
-                fetchTasks({
-                    params: {
-                        page,
-                        limit: pageSize,
-                        q: query || undefined,
-                        status: filters.status || undefined,
-                        priority: filters.priority || undefined,
-                        dueFrom: filters.dueFrom || undefined,
-                        dueTo: filters.dueTo || undefined,
-                        sort: filters.sort || "createdAt",
-                        order: filters.order || "desc",
-                    },
-                    token,
-                })
-            ).unwrap();
-            setLoading(false);
-        } catch (e: any) {
-            console.error(e);
+
+        if (token) {
+            try {
+                await dispatch(
+                    fetchTasks({
+                        params: {
+                            page,
+                            limit: pageSize,
+                            q: query || undefined,
+                            status: filters.status || undefined,
+                            priority: filters.priority || undefined,
+                            dueFrom: filters.dueFrom || undefined,
+                            dueTo: filters.dueTo || undefined,
+                            sort: filters.sort || "createdAt",
+                            order: filters.order || "desc",
+                        },
+                        token,
+                    })
+                ).unwrap();
+                setLoading(false);
+            } catch (e: any) {
+                console.error(e);
+            }
         }
+
+
     }, [dispatch, page, pageSize, query, filters, token]);
 
-    useEffect(() => { load(); }, [load]);
+    // useEffect(() => { load(); }, [load]);
     useEffect(() => { if (filterOpen) setDraftFilters(filters); }, [filterOpen, filters]);
 
     React.useEffect(() => {
@@ -148,6 +153,7 @@ export default function EntitiesPage() {
 
         if (localToken) {
             setToken(localToken);
+            load()
             return;
         }
 
@@ -157,13 +163,14 @@ export default function EntitiesPage() {
         if (storedUser && storedToken) {
             try {
                 setToken(storedToken);
+                load()
             } catch (err) {
                 console.error("Failed to parse stored user:", err);
                 localStorage.removeItem("user");
                 localStorage.removeItem("token");
             }
         }
-    }, [localToken])
+    }, [localToken,load])
 
 
     return (
