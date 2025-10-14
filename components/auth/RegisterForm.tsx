@@ -29,7 +29,7 @@ const RegisterForm = () => {
             email: "",
             password: "",
             confirmPassword: "",
-            accept: false,  
+            accept: true,  
             role: "user",   
         },
     });
@@ -43,7 +43,6 @@ const RegisterForm = () => {
 
         const res = await dispatch(registerThunk(values));
 
-        console.log({ res })
         router.push('/dashboard');
 
 
