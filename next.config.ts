@@ -16,7 +16,7 @@ const nextConfig = {
     return [
       {
         source: "/api/:path*",
-        destination: "https://crud-backend-15ir.onrender.com /api/:path*",
+        destination: "https://crud-backend-15ir.onrender.com/api/:path*",
       },
     ];
   },
