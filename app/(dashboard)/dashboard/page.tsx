@@ -108,12 +108,7 @@ export default function DashboardPage() {
                         </p>
 
                         <div className="mt-5 flex flex-wrap gap-3">
-                            <Link
-                                href="/entities/new"
-                                className="inline-flex items-center gap-2 rounded-xl bg-emerald-500/90 px-4 py-2 text-sm font-medium text-white shadow transition hover:bg-emerald-500"
-                            >
-                                <Plus className="h-4 w-4" /> New Entity
-                            </Link>
+                            
                             <Link
                                 href="/entities"
                                 className="group inline-flex items-center gap-2 rounded-xl border border-[var(--panel-border)] bg-[var(--panel-bg)] px-4 py-2 text-sm transition hover:bg-[var(--panel-border)]/40"
