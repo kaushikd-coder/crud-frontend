@@ -34,7 +34,6 @@ const Footer = () => {
                         {[
                             { name: 'Dashboard', href: '/dashboard' },
                             { name: 'Entities', href: '/entities' },
-                            { name: 'API Docs', href: '/api-docs' },
                             { name: 'Contact', href: 'mailto:kaushikd696@gmail.com' },
                         ].map((link) =>
                             link.href.startsWith('mailto:') ? (
