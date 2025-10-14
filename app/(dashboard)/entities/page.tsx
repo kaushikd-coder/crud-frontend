@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { Task } from '@/types/task';
 import EntityTable from './components/EntityTable';
 import EntityForm from './components/EntityForm';
@@ -8,15 +8,15 @@ import { useAppDispatch, useAppSelector } from '@/store/hooks';
 import { deleteTask, fetchTasks } from '@/store/slices/taskSlice';
 import ConfirmModal from '@/components/shared/ConfirmModal';
 import FilterModal from '@/components/shared/FilterModal';
-import { FilterIcon, Plus, Search, X, Download } from 'lucide-react'; 
-import { exportTasksCsv } from '@/services/taskApi';                   
-import { downloadBlob } from '@/lib/download';                         
+import { FilterIcon, Plus, Search, X, Download } from 'lucide-react';
+import { exportTasksCsv } from '@/services/taskApi';
+import { downloadBlob } from '@/lib/download';
 
 type TaskFilters = {
     status?: "" | "todo" | "in_progress" | "done";
     priority?: "" | "low" | "medium" | "high";
-    dueFrom?: string; 
-    dueTo?: string;   
+    dueFrom?: string;
+    dueTo?: string;
     sort?: "createdAt" | "dueDate" | "priority" | "status" | "title";
     order?: "asc" | "desc";
 };
@@ -43,7 +43,9 @@ export default function EntitiesPage() {
     const [editing, setEditing] = React.useState<Task | null>(null);
 
     const dispatch = useAppDispatch();
-    const token = useAppSelector((s: any) => s.auth.token);
+
+    const [token, setToken] = useState<any>();
+    const localToken = useAppSelector((s: any) => s.auth.token);
 
     const items = useAppSelector((s: any) => s.tasks.items);
     const total = useAppSelector((s: any) => s.tasks.total);
@@ -128,7 +130,7 @@ export default function EntitiesPage() {
             console.log({ params });
 
             const blob = await exportTasksCsv({ params, token });
-            
+
             const now = new Date();
             const stamp =
                 `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-` +
@@ -140,6 +142,28 @@ export default function EntitiesPage() {
             setExporting(false);
         }
     };
+
+
+    useEffect(() => {
+
+        if (localToken) {
+            setToken(localToken);
+            return;
+        }
+
+        const storedUser = localStorage.getItem("user");
+        const storedToken = localStorage.getItem("token");
+
+        if (storedUser && storedToken) {
+            try {
+                setToken(storedToken);
+            } catch (err) {
+                console.error("Failed to parse stored user:", err);
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+            }
+        }
+    }, [localToken])
 
 
     return (

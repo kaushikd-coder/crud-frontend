@@ -3,7 +3,7 @@ import { CollabRole, inviteCollaboratorApi } from '@/services/collabApi';
 import { AppDispatch } from '@/store';
 import { useAppSelector } from '@/store/hooks';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useDispatch } from 'react-redux';
 
@@ -18,7 +18,8 @@ export default function InviteUserForm({ taskId }: { taskId: string }) {
     const dispatch: any = useDispatch<AppDispatch>();
     const [msg, setMsg] = useState<string | null>(null);
     const [err, setErr] = useState<string | null>(null);
-    const token = useAppSelector((s: any) => s.auth.token);
+    const [token, setToken] = useState<any>();
+    const localToken = useAppSelector((s: any) => s.auth.token);
 
 
     const onSubmit = async (vals: FormVals) => {
@@ -37,6 +38,27 @@ export default function InviteUserForm({ taskId }: { taskId: string }) {
             setErr(e.message || 'Failed to send invite');
         }
     };
+
+    useEffect(() => {
+
+        if (localToken) {
+            setToken(localToken);
+            return;
+        }
+
+        const storedUser = localStorage.getItem("user");
+        const storedToken = localStorage.getItem("token");
+
+        if (storedUser && storedToken) {
+            try {
+                setToken(storedToken);
+            } catch (err) {
+                console.error("Failed to parse stored user:", err);
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+            }
+        }
+    }, [localToken])
 
 
     return (

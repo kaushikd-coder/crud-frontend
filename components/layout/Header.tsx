@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector, useTheme } from "@/store/hooks";
 import { toggleTheme } from "@/store/slices/uiSlice";
 import { useRouter } from "next/navigation";
@@ -16,9 +16,37 @@ const Header = () => {
     const router = useRouter();
     const theme = useTheme();
 
-    const user = useAppSelector((s:any) => s.auth.user);
+    const [user, setUser] = useState<any>();
+    const [token, setToken] = useState<any>();
+
+    const localToken = useAppSelector((s: any) => s.auth.token);
+    const localUser = useAppSelector((s: any) => s.auth.user);
     const username = user?.name || user?.username || "Guest";
-    const token = useAppSelector((s:any) => s.auth.token);
+
+    useEffect(() => {
+
+        if (localUser && localToken) {
+            setUser(localUser);
+            setToken(localToken);
+            return;
+        }
+
+
+        const storedUser = localStorage.getItem("user");
+        const storedToken = localStorage.getItem("token");
+
+        if (storedUser && storedToken) {
+            try {
+                const parsedUser = JSON.parse(storedUser);
+                setUser(parsedUser);
+                setToken(storedToken);
+            } catch (err) {
+                console.error("Failed to parse stored user:", err);
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+            }
+        }
+    }, [localUser, localToken]);
 
 
     // Invite dialog state

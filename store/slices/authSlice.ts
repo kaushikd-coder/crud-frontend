@@ -60,7 +60,7 @@ const authSlice = createSlice({
         },
     },
     extraReducers: (builder) => {
-        
+
         builder
             .addCase(logoutThunk.pending, (state) => {
                 state.status = "loading";
@@ -70,16 +70,16 @@ const authSlice = createSlice({
                 state.status = "idle";
                 state.user = null;
                 state.error = null;
-                
+
             })
             .addCase(logoutThunk.rejected, (state, action) => {
                 state.status = "idle";
                 state.user = null;
                 state.error = (action.payload as string) ?? "Logout failed";
-                
+
             });
 
-        
+
         builder.addMatcher(
             isAnyOf(loginThunk.fulfilled, registerThunk.fulfilled),
             (state, action: PayloadAction<{ user: AuthState["user"]; token?: string }>) => {
@@ -87,6 +87,9 @@ const authSlice = createSlice({
                 state.user = action.payload.user;
                 state.token = action.payload.token;
                 state.error = null;
+                if (action.payload.user) {
+                    localStorage.setItem("user", JSON.stringify(action.payload.user));
+                }
                 if (action.payload.token) {
                     localStorage.setItem("token", action.payload.token);
                 }

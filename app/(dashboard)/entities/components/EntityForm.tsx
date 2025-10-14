@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -16,12 +16,12 @@ type Props = {
     open: boolean;
     editing: Task | null;
     onClose: () => void;
-    onSaved: () => void; 
+    onSaved: () => void;
 };
 
 function nowLocalForDatetime(): string {
     const d = new Date();
-    d.setSeconds(0, 0); 
+    d.setSeconds(0, 0);
     const pad = (n: number) => String(n).padStart(2, '0');
     const y = d.getFullYear();
     const m = pad(d.getMonth() + 1);
@@ -35,7 +35,8 @@ const minDue = nowLocalForDatetime();
 
 export default function EntityForm({ open, editing, onClose, onSaved }: Props) {
     const dispatch = useDispatch<any>();
-    const token = useAppSelector((s: any) => s.auth.token);
+    const [token, setToken] = useState<any>();
+    const localToken = useAppSelector((s: any) => s.auth.token);
     const { preview, status: suggestStatus, error: suggestError } = useAppSelector((s: any) => s.suggestion);
 
     const {
@@ -75,7 +76,7 @@ export default function EntityForm({ open, editing, onClose, onSaved }: Props) {
                 dueDate: '',
             });
         }
-        
+
         dispatch(clearSuggestion());
     }, [editing, reset, dispatch]);
 
@@ -140,7 +141,7 @@ export default function EntityForm({ open, editing, onClose, onSaved }: Props) {
         setValue('priority', preview.priority as TaskCreateInput['priority'], { shouldDirty: true });
 
         if (preview.suggestedDueDate) {
-            
+
             const iso = new Date(preview.suggestedDueDate);
             const local = new Date(iso.getTime() - new Date().getTimezoneOffset() * 60_000);
             const value = local.toISOString().slice(0, 16);
@@ -153,7 +154,7 @@ export default function EntityForm({ open, editing, onClose, onSaved }: Props) {
 
         const payload: TaskCreateInput = {
             ...values,
-            
+
             dueDate: values.dueDate ? new Date(values.dueDate).toISOString() : undefined,
         };
 
@@ -169,6 +170,27 @@ export default function EntityForm({ open, editing, onClose, onSaved }: Props) {
             setSubmitError(e?.message || 'Failed to save task');
         }
     };
+
+    useEffect(() => {
+
+        if (localToken) {
+            setToken(localToken);
+            return;
+        }
+
+        const storedUser = localStorage.getItem("user");
+        const storedToken = localStorage.getItem("token");
+
+        if (storedUser && storedToken) {
+            try {
+                setToken(storedToken);
+            } catch (err) {
+                console.error("Failed to parse stored user:", err);
+                localStorage.removeItem("user");
+                localStorage.removeItem("token");
+            }
+        }
+    }, [localToken])
 
     // Close on ESC
     useEffect(() => {
