@@ -99,6 +99,8 @@ const Header = () => {
 
     const handleLogout = async () => {
         await dispatch(logoutThunk());
+        localStorage.removeItem("user");
+        localStorage.removeItem("token");
         dispatch(logoutUser());
         router.push("/login");
     };
