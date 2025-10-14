@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 const RegisterForm = () => {
 
     const dispatch = useAppDispatch();
-    const authState = useAppSelector((s:any) => s.auth);
+    const authState = useAppSelector((s: any) => s.auth);
     const status = authState?.status ?? "idle";
     const error = authState?.error ?? null;
 
@@ -24,27 +24,29 @@ const RegisterForm = () => {
     } = useForm<RegisterInput>({
         mode: "onChange",
         resolver: zodResolver(RegisterSchema),
-        defaultValues: { name: "", email: "", password: "", confirmPassword: "", accept: false },
+        defaultValues: {
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            accept: false,  
+            role: "user",   
+        },
     });
 
 
     const router = useRouter();
 
     const onSubmit = async (values: RegisterInput) => {
+
+        console.log("Clicked")
+
         const res = await dispatch(registerThunk(values));
 
         console.log({ res })
         router.push('/dashboard');
 
-        // if (registerThunk.rejected.match(res)) {
-        //     setError("root", { type: "server", message: (res.payload as string) ?? "Registration failed" });
-        //     return;
-        // }
 
-        // if (typeof window !== "undefined") {
-        //     const redirect = new URLSearchParams(window.location.search).get("redirect") ?? "/";
-        //     window.location.href = "/login?registered=1&redirect=" + encodeURIComponent(redirect);
-        // }
     };
 
 
@@ -116,7 +118,7 @@ const RegisterForm = () => {
                 )}
             </div>
 
-            
+
 
             {/* Terms */}
             <label className="flex items-center gap-2 text-xs sm:text-sm">
