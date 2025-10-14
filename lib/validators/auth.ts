@@ -29,7 +29,7 @@ export const RegisterSchema = z
         role: RoleEnum.default("user"),           
         accept: z.literal(true, {
             errorMap: () => ({ message: "Please accept the terms" }), 
-        }),
+        } as any),
     })
     .refine((d) => d.password === d.confirmPassword, {
         message: "Passwords do not match",
