@@ -16,7 +16,7 @@ type ExportOpts = {
     selectedIds?: string[]; // optional
 };
 
-const BASE_URL = "https://crud-backend-15ir.onrender.com/api/tasks";
+const BASE_URL = "http://localhost:4000/api/tasks";
 
 /** Helper to handle fetch + JSON + errors */
 async function request<T>(url: string, options?: RequestInit, token?: string): Promise<T> {
@@ -96,7 +96,7 @@ export async function bulkDeleteTasksApi(ids: string[], token?: string): Promise
 export async function exportTasksCsv({ params, token }: { params: URLSearchParams; token?: string | null }) {
     params.set("tzOffsetMinutes", String(-new Date().getTimezoneOffset()));
     const headers: Record<string, string> = {};
-    if (token) headers.Authorization = `Bearer ${token}`;
+    if (token) headers.Authorization = `${token}`;
 
     const res = await fetch(`${BASE_URL}/export.csv?${params.toString()}`, {
         method: "GET",

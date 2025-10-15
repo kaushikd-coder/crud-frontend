@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import type { Task } from '@/types/task';
 import EntityTable from './components/EntityTable';
 import EntityForm from './components/EntityForm';
@@ -113,7 +113,7 @@ export default function EntitiesPage() {
     const onSaved = async () => { setShowForm(false); await load(); };
 
 
-    const buildExportParams = React.useCallback(() => {
+    const buildExportParams = useCallback(async() => {
         const p = new URLSearchParams();
 
         if (query) p.set("q", query);
@@ -130,11 +130,10 @@ export default function EntitiesPage() {
     const onExportCsv = async () => {
 
         if (token) {
+
             try {
                 setExporting(true);
                 const params = await buildExportParams();
-
-                console.log({ params });
 
                 const blob = await exportTasksCsv({ params, token });
 

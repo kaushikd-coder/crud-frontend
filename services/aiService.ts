@@ -2,7 +2,7 @@ export async function generateDescriptionApi(
     title: string,
     context = ""
 ): Promise<{ text: string }> {
-    const res = await fetch("https://crud-backend-15ir.onrender.com/api/ai/generate", {
+    const res = await fetch("http://localhost:4000/api/ai/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include", 

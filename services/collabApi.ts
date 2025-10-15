@@ -28,7 +28,7 @@ export interface Invite {
     createdAt: string;
 }
 
-const BASE = process.env.NEXT_PUBLIC_API_URL || " https://crud-backend-15ir.onrender.com";
+const BASE = process.env.NEXT_PUBLIC_API_URL || " http://localhost:4000";
 
 function authHeaders(token: string) {
     return {
