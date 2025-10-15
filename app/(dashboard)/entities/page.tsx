@@ -128,24 +128,28 @@ export default function EntitiesPage() {
 
     const [exporting, setExporting] = React.useState(false);
     const onExportCsv = async () => {
-        try {
-            setExporting(true);
-            const params = await buildExportParams();
 
-            console.log({ params });
+        if (token) {
+            try {
+                setExporting(true);
+                const params = await buildExportParams();
 
-            const blob = await exportTasksCsv({ params, token });
+                console.log({ params });
 
-            const now = new Date();
-            const stamp =
-                `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-` +
-                `${String(now.getHours()).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}`;
-            await downloadBlob(blob, `tasks-${stamp}.csv`);
-        } catch (e: any) {
-            alert(e.message || "Failed to export CSV");
-        } finally {
-            setExporting(false);
+                const blob = await exportTasksCsv({ params, token });
+
+                const now = new Date();
+                const stamp =
+                    `${now.getFullYear()}${String(now.getMonth() + 1).padStart(2, "0")}${String(now.getDate()).padStart(2, "0")}-` +
+                    `${String(now.getHours()).padStart(2, "0")}${String(now.getMinutes()).padStart(2, "0")}`;
+                await downloadBlob(blob, `tasks-${stamp}.csv`);
+            } catch (e: any) {
+                alert(e.message || "Failed to export CSV");
+            } finally {
+                setExporting(false);
+            }
         }
+
     };
 
 
@@ -170,7 +174,7 @@ export default function EntitiesPage() {
                 localStorage.removeItem("token");
             }
         }
-    }, [localToken,load])
+    }, [localToken, load])
 
 
     return (

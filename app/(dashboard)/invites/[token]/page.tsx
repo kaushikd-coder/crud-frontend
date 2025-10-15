@@ -18,7 +18,7 @@ export default function InviteBridge() {
             router.replace(`/login?next=/invites/${token}?action=${action}`);
             return;
         }
-
+// dwd 
         const run = async () => {
             try {
                 const res = await fetch(`/api/tasks/invites/${token}/${action}`, {
